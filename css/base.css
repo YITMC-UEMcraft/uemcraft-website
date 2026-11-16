@@ -157,6 +157,11 @@ html {
   background:var(--c-bg-section-alt);
 }
 
+/* 宽容器：作品展示列表/详情等需要更大画布的页面 */
+.container-wide {
+  max-width:1360px;
+}
+
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }

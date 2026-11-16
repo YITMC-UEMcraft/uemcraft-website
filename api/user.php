@@ -182,6 +182,22 @@ try {
         json_response(['success' => true, 'data' => $data]);
     }
 
+    // ---- 全体成员（关于我们页成员墙，仅公开主页用户，访客可读） ----
+    if ($action === 'members') {
+        $stmt = $db->query("SELECT * FROM users WHERE is_public = 1 ORDER BY created_at ASC, id ASC");
+        $members = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $members[] = [
+                'id'          => (int) $row['id'],
+                'nickname'    => (string) $row['nickname'],
+                'avatar'      => userDisplayAvatar($row),
+                'player_name' => (string) $row['player_name'],
+                'created_at'  => (int) $row['created_at'],
+            ];
+        }
+        json_response(['success' => true, 'data' => $members]);
+    }
+
     json_response(['success' => false, 'error' => '未知操作'], 400);
 } catch (Throwable $e) {
     error_log('[user.php] ' . $e->getMessage());

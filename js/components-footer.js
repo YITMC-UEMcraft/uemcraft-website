@@ -12,7 +12,7 @@
 
     // 品牌区
     html += '<div class="footer-brand">';
-    html += '<div class="footer-logo"><img src="/assets/img/logo-256.webp" alt="UEMCraft" width="36" height="36"><span>应急管理大学 Minecraft 同好会</span></div>';
+    html += '<div class="footer-logo"><img src="/assets/img/logo-256.webp" alt="UEMCraft" width="36" height="36"><span>应急管理大学<br>Minecraft 同好会</span></div>';
     html += '<p>以 Minecraft 为平台，建设校园数字复原与创作社区。MUA 成员组织。</p>';
     html += '<div class="footer-badges">';
     html += '<a href="/index.html" class="footer-badge">UEMCraft</a>';
@@ -26,13 +26,11 @@
     var footerLinks = [
       ['/index.html', '首页'],
       ['/about.html', '关于我们'],
-      ['/news/', '资讯动态'],
       ['/events.html', '活动中心'],
       ['/gallery/', '作品展示'],
       ['/parkour/', '跑酷排行'],
-      ['/docs/', '指南与文档'],
+      ['/news/', '资讯动态'],
       ['/wall/', '留言墙'],
-      ['/join.html', '加入我们'],
       ['/donors/', '捐赠者']
     ];
     for (var i = 0; i < footerLinks.length; i++) {

@@ -27,7 +27,7 @@
         { label: '指南与文档', path: '/docs/', match: ['/docs'] }
       ]
     },
-    { label: '留言墙',     path: '/wall/',         match: ['/wall/'] },
+    { label: '留言墙',     path: '/wall/',         match: ['/wall/'], divider: true },
     { label: '捐赠者',     path: '/donors/',       match: ['/donors/'] }
   ];
 
@@ -162,6 +162,8 @@
           if (childActive(item.children[j])) active = true;
         }
       }
+      // 分组分割线（留言墙等独立分区之前）
+      if (item.divider) mobileLinks += '<div class="mobile-sep" aria-hidden="true"></div>';
       if (item.noLink) {
         // 不可点击的分组标签（如「资料」），子项缩进排在下面
         mobileLinks += '<div class="mobile-group-label">' + item.label + '</div>';
@@ -182,7 +184,7 @@
     }
 
     // 登录 / 我的档案入口（登录后由 hydrateAuth 更新文案与链接）
-    mobileLinks += '<a id="mobileAuth" href="' + loginHref().replace(/&/g, '&amp;') + '">登录</a>';
+    mobileLinks += '<a id="mobileAuth" class="mobile-auth" href="' + loginHref().replace(/&/g, '&amp;') + '">登录</a>';
 
     // 纹理选项
     var textures = ['bricks','cobblestone','dirt','end_stone','stone','stone_bricks'];
