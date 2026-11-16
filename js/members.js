@@ -41,12 +41,15 @@
 
     var html = '';
     members.forEach(function (m) {
-      html += '<a class="member-card" href="/profile/?id=' + encodeURIComponent(m.id) + '">';
-      html += '<img class="member-card-avatar" src="' + escapeAttr(m.avatar || '') + '" alt="" loading="lazy">';
-      html += '<span class="member-card-name" title="' + escapeAttr(m.nickname || '') + '">' + escapeHtml(m.nickname || '未命名用户') + '</span>';
+      html += '<a class="member-row" href="/profile/?id=' + encodeURIComponent(m.id) + '">';
+      html += '<img class="member-row-avatar" src="' + escapeAttr(m.avatar || '') + '" alt="" loading="lazy">';
+      html += '<span class="member-row-main">';
+      html += '<span class="member-row-name" title="' + escapeAttr(m.nickname || '') + '">' + escapeHtml(m.nickname || '未命名用户') + '</span>';
       if (m.player_name) {
-        html += '<span class="member-card-player" title="' + escapeAttr(m.player_name) + '">' + escapeHtml(m.player_name) + '</span>';
+        html += '<span class="member-row-player" title="' + escapeAttr(m.player_name) + '">' + escapeHtml(m.player_name) + '</span>';
       }
+      html += '</span>';
+      html += '<span class="member-row-arrow" aria-hidden="true">→</span>';
       html += '</a>';
     });
     wall.innerHTML = html;

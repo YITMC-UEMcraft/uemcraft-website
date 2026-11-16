@@ -2210,10 +2210,10 @@
 .parkour-ranking .rank-cell { white-space: nowrap; }
 .parkour-medal {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   margin-right: 4px;
-  vertical-align: -4px;
+  vertical-align: -3px;
   image-rendering: pixelated;
 }
 
@@ -2281,64 +2281,114 @@
   .parkour-stat { padding-left: 0; border-left: 0; }
 }
 
-/* ========== About: 全体成员墙 ========== */
+/* ========== About: 全体成员墙（名册行长卡） ========== */
 .members-count {
-  font-size: var(--fs-sm);
-  font-family: var(--font-mono);
-  color: var(--c-text-muted);
+  display: inline-block;
   margin-left: var(--space-sm);
+  padding: 2px 10px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: #2A2D3A;
+  background: var(--c-gold);
   vertical-align: middle;
 }
+.members-count:empty { display: none; }
 .members-intro {
   font-size: var(--fs-sm);
   color: var(--c-text-muted);
   line-height: 1.7;
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 0 var(--space-lg);
 }
 .members-wall {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-md);
 }
-.member-card {
+.member-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md);
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   background: var(--c-surface);
   border: 2px solid var(--c-border);
   border-radius: var(--radius);
   text-decoration: none;
-  text-align: center;
   min-width: 0;
-  transition: border-color var(--duration), transform var(--duration), box-shadow var(--duration);
+  transition: border-color var(--duration), box-shadow var(--duration), transform var(--duration);
 }
-.member-card:hover {
+.member-row:hover {
   border-color: var(--c-primary);
-  transform: translateY(-2px);
   box-shadow: var(--shadow-hard-sm);
+  transform: translateY(-1px);
 }
-.member-card-avatar {
-  width: 72px;
-  height: 72px;
+.member-row-avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
   image-rendering: pixelated;
 }
-.member-card-name {
+.member-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.member-row-name {
+  font-size: var(--fs-base);
   font-weight: 700;
-  font-size: var(--fs-sm);
   color: var(--c-heading);
-  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.member-card-player {
+.member-row-player {
   font-size: var(--fs-xs);
   color: var(--c-text-muted);
-  max-width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.member-row-arrow {
+  flex-shrink: 0;
+  color: var(--c-text-muted);
+  transition: color var(--duration), transform var(--duration);
+}
+.member-row:hover .member-row-arrow {
+  color: var(--c-primary);
+  transform: translateX(3px);
+}
+@media (max-width: 768px) {
+  .members-wall { grid-template-columns: 1fr; }
+}
+
+/* ========== Profile: 3D 角色模型 ========== */
+.skin-stage-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.skin-stage {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  overflow: hidden;
+  background: var(--c-bg-section-alt);
+  background-image: var(--pixel-grid);
+  border: 2px solid var(--c-border);
+  border-radius: var(--radius);
+  cursor: grab;
+}
+.skin-stage:active { cursor: grabbing; }
+.skin-stage canvas { display: block; width: 100%; height: 100%; }
+.skin-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+@media (max-width: 640px) {
+  .skin-stage { height: 300px; }
 }

@@ -23,14 +23,14 @@
       }
     })();
   </script>
-  <link rel="stylesheet" href="/css/tokens.css?v=7880d9b">
-  <link rel="stylesheet" href="/css/base.css?v=7880d9b">
-  <link rel="stylesheet" href="/css/layout.css?v=7880d9b">
-  <link rel="stylesheet" href="/css/components.css?v=7880d9b">
-  <link rel="stylesheet" href="/css/pages.css?v=7880d9b">
+  <link rel="stylesheet" href="/css/tokens.css?v=b556579">
+  <link rel="stylesheet" href="/css/base.css?v=b556579">
+  <link rel="stylesheet" href="/css/layout.css?v=b556579">
+  <link rel="stylesheet" href="/css/components.css?v=b556579">
+  <link rel="stylesheet" href="/css/pages.css?v=b556579">
 </head>
 <body>
-<script src="/js/components-header.js?v=7880d9b"></script>
+<script src="/js/components-header.js?v=b556579"></script>
 
 <a href="#main" class="skip-link">跳转到主内容</a>
 
@@ -63,6 +63,17 @@
         <a id="editProfileBtn" class="btn btn-outline" href="/account/" style="display:none;">编辑档案</a>
       </header>
 
+      <section class="profile-section profile-skin" id="skinSection" style="display:none;">
+        <h3 class="profile-section-title">角色模型</h3>
+        <div class="skin-stage-wrap">
+          <div id="skinStage" class="skin-stage"></div>
+          <div class="skin-tools">
+            <button type="button" class="btn btn-ghost btn-sm" id="skinReset">复位视角</button>
+            <span class="form-hint">拖拽旋转 · 滚轮缩放 · 右键平移</span>
+          </div>
+        </div>
+      </section>
+
       <section class="profile-section" id="bioSection">
         <h3 class="profile-section-title">个人简介</h3>
         <p class="profile-bio" id="profileBio"></p>
@@ -83,12 +94,15 @@
 </section>
 </main>
 
-<script src="/js/components-footer.js?v=7880d9b"></script>
-<script defer src="/js/utils.js?v=7880d9b"></script>
-<script defer src="/js/cjk-spacing.js?v=7880d9b"></script>
-<script defer src="/js/nav.js?v=7880d9b"></script>
-<script defer src="/js/page-transition.js?v=7880d9b"></script>
-<script defer src="/js/theme.js?v=7880d9b"></script>
-<script defer src="/js/profile.js?v=7880d9b"></script>
+<script src="/js/components-footer.js?v=b556579"></script>
+<script defer src="/js/utils.js?v=b556579"></script>
+<script defer src="/js/cjk-spacing.js?v=b556579"></script>
+<script defer src="/js/nav.js?v=b556579"></script>
+<script defer src="/js/page-transition.js?v=b556579"></script>
+<script defer src="/js/theme.js?v=b556579"></script>
+<script defer src="/js/profile.js?v=b556579"></script>
+<script defer src="/js/three.min.js?v=b556579"></script>
+<script defer src="/js/skin3d.js?v=b556579"></script>
+<script defer src="/js/profile-skin.js?v=b556579"></script>
 </body>
 </html>

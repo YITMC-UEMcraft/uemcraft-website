@@ -2283,8 +2283,8 @@ a.contact-card:hover .cc-title {
   box-shadow:0 0 0 2px var(--c-primary);
 }
 .theme-option img {
-  width:18px;
-  height:18px;
+  width:16px;
+  height:16px;
   image-rendering:pixelated;
   /* 白色像素图标：亮色主题反相为深色 */
   filter:invert(1);

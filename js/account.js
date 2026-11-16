@@ -120,6 +120,9 @@
       var role = user.role || 'user';
       roleEl.className = 'account-role is-' + role;
       roleEl.textContent = role === 'super_admin' ? '超级管理员' : (role === 'admin' ? '管理员' : '普通用户');
+      // 管理员/超管：显示「网站内容管理」入口
+      var adminLink = document.getElementById('adminPanelLink');
+      if (adminLink) adminLink.style.display = (role === 'admin' || role === 'super_admin') ? '' : 'none';
     }
     document.getElementById('accountEmail').textContent = user.email || '（未提供）';
     document.getElementById('accountCreated').textContent = formatTs(user.created_at);

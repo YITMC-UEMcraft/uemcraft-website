@@ -78,6 +78,44 @@ function normUuid($uuid) {
     return strtolower(str_replace('-', '', (string) $uuid));
 }
 
+/**
+ * 外呼皮肤站（OAuth 之外的公开数据：Yggdrasil profile / 皮肤贴图）。
+ * curl + stream 双通道，保持 SSL 证书校验；超时 5 秒，失败返回 ''。
+ */
+function userHttpGet($url, $maxBytes = 2097152) {
+    $opts = ['http' => ['timeout' => 5, 'ignore_errors' => false]];
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxBytes);
+        $raw = curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        return ($raw !== false && $status === 200 && strlen($raw) <= $maxBytes) ? $raw : '';
+    }
+    $ctx = stream_context_create($opts);
+    $raw = @file_get_contents($url, false, $ctx);
+    return (is_string($raw) && $raw !== '' && strlen($raw) <= $maxBytes) ? $raw : '';
+}
+
+/** 皮肤贴图只允许来自皮肤站及其联盟域名（防 SSRF） */
+function userSkinUrlAllowed($url) {
+    $parts = parse_url($url);
+    if (!$parts || ($parts['scheme'] ?? '') !== 'https' || empty($parts['host'])) {
+        return false;
+    }
+    $host = strtolower($parts['host']);
+    foreach (['uemcraft.cn', 'yitmc.cn'] as $domain) {
+        if ($host === $domain || substr($host, -strlen('.' . $domain)) === '.' . $domain) {
+            return true;
+        }
+    }
+    return false;
+}
+
 $action = $_GET['action'] ?? '';
 
 try {
@@ -196,6 +234,55 @@ try {
             ];
         }
         json_response(['success' => true, 'data' => $members]);
+    }
+
+    // ---- 3D 角色皮肤贴图（服务端代理皮肤站，避免前端画布跨域污染） ----
+    if ($action === 'skin') {
+        $id = intval($_GET['id'] ?? 0);
+        if ($id <= 0) {
+            json_response(['success' => false, 'error' => '缺少合法的 id'], 400);
+        }
+        $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        if (!$user || (int) $user['is_public'] !== 1 || (string) $user['player_uuid'] === '') {
+            json_response(['success' => false, 'error' => '没有可展示的角色'], 404);
+        }
+
+        // 1. Yggdrasil profile → textures 属性（base64 JSON）
+        $uuid = normUuid($user['player_uuid']);
+        $profileRaw = userHttpGet('https://skin.uemcraft.cn/api/yggdrasil/sessionserver/session/minecraft/profile/' . rawurlencode($uuid));
+        $profile = json_decode($profileRaw, true);
+        $skinUrl = '';
+        $model = '';
+        foreach ((array) ($profile['properties'] ?? []) as $prop) {
+            if (($prop['name'] ?? '') === 'textures' && !empty($prop['value'])) {
+                $textures = json_decode(base64_decode((string) $prop['value']), true);
+                $skinUrl = (string) ($textures['textures']['SKIN']['url'] ?? '');
+                $model = (string) ($textures['textures']['SKIN']['metadata']['model'] ?? '');
+                break;
+            }
+        }
+        if ($skinUrl === '' || !userSkinUrlAllowed($skinUrl)) {
+            error_log('[user.php] skin: 未获取到可用贴图 user=' . $id . ' raw_len=' . strlen($profileRaw) . ' url=' . $skinUrl);
+            json_response(['success' => false, 'error' => '未获取到皮肤贴图'], 404);
+        }
+
+        // 2. 下载贴图并原样代理输出（同源，前端 canvas 可正常读取像素）
+        $bytes = userHttpGet($skinUrl);
+        if ($bytes === '') {
+            error_log('[user.php] skin: 贴图下载失败 ' . $skinUrl);
+            json_response(['success' => false, 'error' => '皮肤贴图下载失败'], 404);
+        }
+        $type = 'image/png';
+        if (substr($bytes, 0, 2) === "\xFF\xD8") {
+            $type = 'image/jpeg';
+        }
+        header('Content-Type: ' . $type);
+        header('Cache-Control: public, max-age=3600');
+        header('X-Skin-Model: ' . ($model === 'slim' ? 'slim' : 'classic'));
+        echo $bytes;
+        exit;
     }
 
     json_response(['success' => false, 'error' => '未知操作'], 400);
