@@ -67,7 +67,11 @@ document.addEventListener('DOMContentLoaded', function () {
   function onScroll() {
     var y = window.scrollY;
     if (header) header.classList.toggle('is-scrolled', y > 10);
-    if (backTop) backTop.classList.toggle('is-visible', y > 600);
+    if (backTop) {
+      // 临近页底时隐藏，避免覆盖页脚版权/备案文字
+      var nearBottom = window.innerHeight + y >= document.documentElement.scrollHeight - 120;
+      backTop.classList.toggle('is-visible', y > 600 && !nearBottom);
+    }
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();

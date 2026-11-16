@@ -30,6 +30,8 @@
     }
 
     section.style.display = '';
+    var body = document.querySelector('.profile-body');
+    if (body) body.classList.add('has-skin');
 
     var resetBtn = document.getElementById('skinReset');
     if (resetBtn) {

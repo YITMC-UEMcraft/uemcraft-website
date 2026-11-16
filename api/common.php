@@ -91,6 +91,8 @@ const ADMIN_PERMISSION_NODES = [
     'images'    => '图片管理',
     'parkour'   => '跑酷排行',
     'wall'      => '留言墙管理',
+    'stats'     => '首页数据',
+    'timeline'  => '发展历程',
 ];
 
 /**
@@ -284,6 +286,7 @@ function requireUser($db) {
 function userView($user) {
     $players = json_decode($user['players_json'] ?: '[]', true);
     $social = json_decode($user['social_links'] ?: '[]', true);
+    $tags = json_decode($user['tags_json'] ?? '[]', true);
     return [
         'id'            => (int) $user['id'],
         'nickname'      => (string) $user['nickname'],
@@ -301,6 +304,7 @@ function userView($user) {
         // 角色与权限只在本人接口返回；公开主页接口不暴露
         'role'          => (string) ($user['role'] ?? 'user'),
         'perms'         => userPermissions($user),
+        'tags'          => is_array($tags) ? array_values($tags) : [],
         'created_at'    => (int) $user['created_at'],
         'last_login_at' => (int) $user['last_login_at'],
     ];
@@ -404,6 +408,7 @@ function createUserTables($db, $driver) {
             show_contact TINYINT NOT NULL DEFAULT 0,
             role VARCHAR(16) NOT NULL DEFAULT 'user',
             perms_json VARCHAR(500) NOT NULL DEFAULT '[]',
+            tags_json VARCHAR(500) NOT NULL DEFAULT '[]',
             created_at INT NOT NULL,
             updated_at INT NOT NULL,
             last_login_at INT NOT NULL DEFAULT 0,
@@ -451,6 +456,7 @@ function createUserTables($db, $driver) {
         show_contact   INTEGER NOT NULL DEFAULT 0,
         role           TEXT NOT NULL DEFAULT 'user',
         perms_json     TEXT NOT NULL DEFAULT '[]',
+        tags_json      TEXT NOT NULL DEFAULT '[]',
         created_at     INTEGER NOT NULL,
         updated_at     INTEGER NOT NULL,
         last_login_at  INTEGER NOT NULL DEFAULT 0
@@ -475,7 +481,58 @@ function createUserTables($db, $driver) {
     )");
 }
 
+/**
+ * 首页/关于页可管理内容：社团数据（Hero 统计）与 发展历程时间轴。
+ * 与 createUserTables 一样，建表与迁移共用这一份幂等 DDL。
+ */
+function createHomepageTables($db, $driver) {
+    if ($driver === 'mysql') {
+        $db->exec("CREATE TABLE IF NOT EXISTS site_stats (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            label VARCHAR(100) NOT NULL,
+            value VARCHAR(50) NOT NULL DEFAULT '',
+            sort_order INT NOT NULL DEFAULT 0,
+            created_at INT NOT NULL,
+            updated_at INT NOT NULL,
+            PRIMARY KEY (id),
+            KEY idx_stats_sort (sort_order)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $db->exec("CREATE TABLE IF NOT EXISTS timeline_events (
+            id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+            date_label VARCHAR(50) NOT NULL DEFAULT '',
+            title VARCHAR(200) NOT NULL,
+            description TEXT NOT NULL,
+            sort_order INT NOT NULL DEFAULT 0,
+            created_at INT NOT NULL,
+            updated_at INT NOT NULL,
+            PRIMARY KEY (id),
+            KEY idx_timeline_sort (sort_order)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        return;
+    }
+    $db->exec("CREATE TABLE IF NOT EXISTS site_stats (
+        id         INTEGER PRIMARY KEY AUTOINCREMENT,
+        label      TEXT NOT NULL,
+        value      TEXT NOT NULL DEFAULT '',
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+    )");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_stats_sort ON site_stats(sort_order)");
+    $db->exec("CREATE TABLE IF NOT EXISTS timeline_events (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        date_label  TEXT NOT NULL DEFAULT '',
+        title       TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        sort_order  INTEGER NOT NULL DEFAULT 0,
+        created_at  INTEGER NOT NULL,
+        updated_at  INTEGER NOT NULL
+    )");
+    $db->exec("CREATE INDEX IF NOT EXISTS idx_timeline_sort ON timeline_events(sort_order)");
+}
+
 function createSiteTables($db, $driver) {
+    createHomepageTables($db, $driver);
     createUserTables($db, $driver);
 
     if ($driver === 'mysql') {
@@ -768,6 +825,8 @@ function createSiteTables($db, $driver) {
 function migrateSiteTables($db, $driver) {
     // 迁移：新增用户账号相关表（users / user_sessions / oauth_states）
     createUserTables($db, $driver);
+    // 迁移：新增首页数据/发展历程表
+    createHomepageTables($db, $driver);
 
     // 迁移：users 表新增 role / perms_json 列（后台角色与权限节点）
     try {
@@ -786,6 +845,16 @@ function migrateSiteTables($db, $driver) {
             $db->exec("ALTER TABLE users ADD COLUMN perms_json VARCHAR(500) NOT NULL DEFAULT '[]'");
         } else {
             $db->exec("ALTER TABLE users ADD COLUMN perms_json TEXT NOT NULL DEFAULT '[]'");
+        }
+    }
+    // 迁移：users 表新增 tags_json 列（超级管理员为用户设置的标签）
+    try {
+        $test = $db->query("SELECT tags_json FROM users LIMIT 0");
+    } catch (PDOException $e) {
+        if ($driver === 'mysql') {
+            $db->exec("ALTER TABLE users ADD COLUMN tags_json VARCHAR(500) NOT NULL DEFAULT '[]'");
+        } else {
+            $db->exec("ALTER TABLE users ADD COLUMN tags_json TEXT NOT NULL DEFAULT '[]'");
         }
     }
 

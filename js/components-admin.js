@@ -17,6 +17,8 @@
   // superOnly: 仅超级管理员可见
   var ADMIN_NAV = [
     { label: '仪表盘',     path: 'index.html',   match: ['index', ''],              icon: '盘', node: null },
+    { label: '首页数据',   path: 'stats.html',   match: ['stats'],                 icon: '数', node: 'stats' },
+    { label: '发展历程',   path: 'timeline.html', match: ['timeline'],             icon: '历', node: 'timeline' },
     { label: '新闻管理',   path: 'news.html',    match: ['news', 'news-edit'],      icon: '新', node: 'news' },
     { label: '活动管理',   path: 'events.html',  match: ['events', 'events-edit'],  icon: '活', node: 'events' },
     { label: '作品管理',   path: 'gallery.html', match: ['gallery', 'gallery-edit'], icon: '作', node: 'works' },
@@ -104,8 +106,8 @@
     html += '<span class="admin-topbar-title" id="adminTopbarTitle"></span>';
     html += '<div class="admin-topbar-right">';
     html += '<div class="theme-options admin-topbar-theme">';
-    html += '<button class="theme-option" data-theme="light" title="亮色模式" aria-label="亮色模式"><img src="/assets/svg/sun.svg" alt="" width="18" height="18"></button>';
-    html += '<button class="theme-option" data-theme="dark" title="深色模式" aria-label="深色模式"><img src="/assets/svg/moon.svg" alt="" width="18" height="18"></button>';
+    html += '<button class="theme-option" data-theme-target="light" title="亮色模式" aria-label="亮色模式"><img src="/assets/svg/sun.svg" alt="" width="18" height="18"></button>';
+    html += '<button class="theme-option" data-theme-target="dark" title="深色模式" aria-label="深色模式"><img src="/assets/svg/moon.svg" alt="" width="18" height="18"></button>';
     html += '</div>';
     html += '</div></header>';
 

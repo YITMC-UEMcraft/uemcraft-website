@@ -23,6 +23,24 @@
     return Auth.escapeHtml(text);
   }
 
+  function escapeAttr(text) {
+    return escapeHtml(text).replace(/"/g, '&quot;');
+  }
+
+  function tagsOf(user) {
+    return Array.isArray(user.tags) ? user.tags : [];
+  }
+
+  function tagsChips(user) {
+    var tags = tagsOf(user);
+    if (!tags.length) return '<span class="text-muted">无标签</span>';
+    var out = '';
+    tags.forEach(function (tag) {
+      out += '<span class="admin-user-chip is-tag">' + escapeHtml(tag) + '</span>';
+    });
+    return out;
+  }
+
   function setMessage(text, type) {
     Auth.showMessage(msgEl, text, type);
   }
@@ -83,6 +101,7 @@
         + (u.player_name ? ' - 角色 ' + escapeHtml(u.player_name) : '')
         + ' - 最近登录 ' + formatTs(u.last_login_at) + '</div>';
       html += '<div class="admin-user-chips">' + permsChips(u) + '</div>';
+      html += '<div class="admin-user-chips">' + tagsChips(u) + '</div>';
       html += '</div>';
 
       html += '<div class="admin-user-actions">';
@@ -97,6 +116,7 @@
         }
         html += '<button type="button" class="btn btn-ghost btn-sm" data-act="transfer">转交超管</button>';
       }
+      html += '<button type="button" class="btn btn-ghost btn-sm" data-act="tags">编辑标签</button>';
       html += '</div>';
 
       if (u.role === 'admin') {
@@ -110,6 +130,12 @@
           + '<button type="button" class="btn btn-primary btn-sm" data-act="save-perms">保存权限</button>'
           + '</div></div>';
       }
+
+      html += '<div class="admin-user-tags-editor" style="display:none;">'
+        + '<input type="text" class="form-input" maxlength="200" value="' + escapeAttr(tagsOf(u).join('，')) + '"'
+        + ' placeholder="用逗号分隔，例如：建筑 / 红石 / 美工（最多 10 个，每个 ≤16 字）">'
+        + '<button type="button" class="btn btn-primary btn-sm" data-act="save-tags">保存标签</button>'
+        + '</div>';
 
       html += '</div>';
     });
@@ -155,6 +181,30 @@
     if (act === 'perms') {
       var panel = row.querySelector('.admin-user-perms');
       if (panel) panel.style.display = panel.style.display === 'none' ? '' : 'none';
+      return;
+    }
+
+    if (act === 'tags') {
+      var editor = row.querySelector('.admin-user-tags-editor');
+      if (editor) {
+        editor.style.display = editor.style.display === 'none' ? '' : 'none';
+        if (editor.style.display === '') {
+          var input = editor.querySelector('input');
+          if (input) input.focus();
+        }
+      }
+      return;
+    }
+
+    if (act === 'save-tags') {
+      var tagInput = row.querySelector('.admin-user-tags-editor input');
+      var raw = tagInput ? tagInput.value : '';
+      var tags = raw.split(/[,，、\s]+/).map(function (t) { return t.trim(); }).filter(function (t) { return t !== ''; });
+      post('set_tags', { user_id: userId, tags: tags }).then(function (json) {
+        if (!json.success) throw new Error(json.error || '保存失败');
+        setMessage('标签已保存', 'success');
+        loadAll();
+      }).catch(handleError);
       return;
     }
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#213d87">
+  <title>首页数据 — UEMCraft</title>
+  <link rel="icon" href="../favicon.ico" type="images/x-icon">
+  <script>
+    (function(){
+      var t = localStorage.getItem('uemcraft-theme');
+      if(!t) t = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+      document.documentElement.style.colorScheme = t;
+      var tex = localStorage.getItem('uemcraft-texture');
+      if(tex && tex !== 'none'){
+        document.documentElement.setAttribute('data-texture', tex);
+        var s = document.createElement('style');
+        s.id = 'texture-style';
+        s.textContent = 'body::after{background-image:url(/assets/img/background_textures/'+tex+'.png);}';
+        document.head.appendChild(s);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/tokens.css?v=0e81061">
+  <link rel="stylesheet" href="/css/base.css?v=0e81061">
+  <link rel="stylesheet" href="/css/layout.css?v=0e81061">
+  <link rel="stylesheet" href="/css/components.css?v=0e81061">
+  <link rel="stylesheet" href="/css/pages.css?v=0e81061">
+  <link rel="stylesheet" href="css/admin.css?v=0e81061">
+</head>
+<body>
+<script src="/js/components-admin.js?v=0e81061"></script>
+
+<a href="#main" class="skip-link">跳转到主内容</a>
+
+<main id="main">
+
+<div class="admin-page-header">
+  <h1>首页数据</h1>
+  <p class="hero-sub">管理首页 Hero 下方的社团统计条</p>
+  <nav class="breadcrumb" aria-label="面包屑">
+    <a href="/index.html">首页</a> <span>/</span> <a href="index.html">管理后台</a> <span>/</span> <span>首页数据</span>
+  </nav>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <div class="admin-toolbar">
+      <div class="admin-toolbar-right" style="margin-left:auto;">
+        <span class="text-muted">共 <strong id="statTotal">0</strong> 条</span>
+        <button type="button" class="btn btn-primary btn-sm" id="addStatBtn">+ 新增数据</button>
+      </div>
+    </div>
+
+    <form id="statForm" class="admin-card" style="display:none; margin-bottom:var(--space-lg);">
+      <div class="form-group">
+        <label for="statLabel">名称</label>
+        <input id="statLabel" class="form-input" maxlength="50" placeholder="如：注册成员">
+      </div>
+      <div class="form-group">
+        <label for="statValue">数值</label>
+        <input id="statValue" class="form-input" maxlength="50" placeholder="如：150+">
+      </div>
+      <div class="form-group">
+        <label for="statSort">排序（小的在前）</label>
+        <input id="statSort" type="number" class="form-input" value="0">
+      </div>
+      <div style="display:flex;gap:var(--space-sm);align-items:center;flex-wrap:wrap;">
+        <button type="submit" class="btn btn-primary" id="statSaveBtn">新增</button>
+        <button type="button" class="btn btn-ghost" id="statCancelBtn">取消</button>
+        <span id="statMessage" class="wall-form-message" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div id="statList" class="admin-list"></div>
+    <div id="statStatus" class="wall-loading">正在加载…</div>
+  </div>
+</section>
+
+</main>
+
+<script src="/js/components-footer.js?v=0e81061"></script>
+<script defer src="/js/utils.js?v=0e81061"></script>
+<script defer src="/js/cjk-spacing.js?v=0e81061"></script>
+<script defer src="/js/nav.js?v=0e81061"></script>
+<script defer src="/js/page-transition.js?v=0e81061"></script>
+<script defer src="/js/theme.js?v=0e81061"></script>
+<script defer src="/js/admin-auth.js?v=0e81061"></script>
+<script defer src="/js/admin-stats.js?v=0e81061"></script>
+</body>
+</html>

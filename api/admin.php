@@ -54,6 +54,7 @@ function adminUserView($user) {
         'email'         => (string) $user['email'],
         'role'          => (string) ($user['role'] ?? 'user'),
         'perms'         => userPermissions($user),
+        'tags'          => is_array(json_decode($user['tags_json'] ?? '[]', true)) ? array_values(json_decode($user['tags_json'] ?? '[]', true)) : [],
         'player_name'   => (string) $user['player_name'],
         'created_at'    => (int) $user['created_at'],
         'last_login_at' => (int) $user['last_login_at'],
@@ -144,6 +145,42 @@ try {
 
         $upd = $db->prepare("UPDATE users SET perms_json = ?, updated_at = ? WHERE id = ?");
         $upd->execute([json_encode($nodes, JSON_UNESCAPED_UNICODE), now(), (int) $target['id']]);
+
+        $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+        $stmt->execute([(int) $target['id']]);
+        json_response(['success' => true, 'data' => adminUserView($stmt->fetch())]);
+    }
+
+    // ---- 设置用户标签（超管可为任意用户设置，含自己） ----
+    if ($action === 'set_tags') {
+        requireSuperAdmin($db);
+        $input = adminRequirePostJson();
+        $target = adminFetchTarget($db, $input);
+
+        if (!is_array($input['tags'] ?? null)) {
+            json_response(['success' => false, 'error' => 'tags 应为字符串数组'], 400);
+        }
+        $tags = [];
+        foreach ($input['tags'] as $tag) {
+            if (!is_string($tag)) {
+                json_response(['success' => false, 'error' => '标签必须是字符串'], 400);
+            }
+            $tag = trim($tag);
+            if ($tag === '') {
+                continue;
+            }
+            if (charCount($tag) > 16) {
+                json_response(['success' => false, 'error' => '单个标签长度应为 1–16 字'], 400);
+            }
+            $tags[] = $tag;
+        }
+        $tags = array_values(array_unique($tags));
+        if (count($tags) > 10) {
+            json_response(['success' => false, 'error' => '每个用户最多 10 个标签'], 400);
+        }
+
+        $upd = $db->prepare("UPDATE users SET tags_json = ?, updated_at = ? WHERE id = ?");
+        $upd->execute([json_encode($tags, JSON_UNESCAPED_UNICODE), now(), (int) $target['id']]);
 
         $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->execute([(int) $target['id']]);

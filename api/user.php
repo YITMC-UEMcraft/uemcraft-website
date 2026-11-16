@@ -204,6 +204,7 @@ try {
         }
 
         $social = json_decode($user['social_links'] ?: '[]', true);
+        $tags = json_decode($user['tags_json'] ?? '[]', true);
         $data = [
             'id'          => (int) $user['id'],
             'nickname'    => (string) $user['nickname'],
@@ -212,6 +213,7 @@ try {
             'player_name' => (string) $user['player_name'],
             'bio'         => (string) $user['bio'],
             'social_links' => is_array($social) ? $social : [],
+            'tags'        => is_array($tags) ? array_values($tags) : [],
             'created_at'  => (int) $user['created_at'],
         ];
         if ((int) $user['show_contact'] === 1) {
@@ -225,11 +227,14 @@ try {
         $stmt = $db->query("SELECT * FROM users WHERE is_public = 1 ORDER BY created_at ASC, id ASC");
         $members = [];
         foreach ($stmt->fetchAll() as $row) {
+            $tags = json_decode($row['tags_json'] ?? '[]', true);
             $members[] = [
                 'id'          => (int) $row['id'],
                 'nickname'    => (string) $row['nickname'],
                 'avatar'      => userDisplayAvatar($row),
                 'player_name' => (string) $row['player_name'],
+                'bio'         => (string) $row['bio'],
+                'tags'        => is_array($tags) ? array_values($tags) : [],
                 'created_at'  => (int) $row['created_at'],
             ];
         }

@@ -62,7 +62,7 @@
     html += '<span class="footer-sep" aria-hidden="true"></span>';
     html += '<a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener" class="beian-icon"><img src="/assets/img/备案图标.png" alt="" style="height:14px;width:auto;">赣公网安备 36072102000273号</a>';
     html += '</p>';
-    html += '<p class="fb-trademark"><a href="https://www.minecraft.net/zh-hans" target="_blank" rel="noopener">Minecraft</a> 是微软公司的商标 - 本站为社群非商业用途</p>';
+    html += '<p class="fb-trademark"><a href="https://www.minecraft.net/zh-hans" target="_blank" rel="noopener">Minecraft</a> 是微软公司的商标<br>本站为社群非商业用途</p>';
     html += '</div></footer>';
 
     // 回到顶部

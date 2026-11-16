@@ -1217,6 +1217,20 @@
   flex-shrink: 0;
 }
 .admin-user-perms-actions { flex-basis: 100%; }
+.admin-user-tags-editor {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  border-top: 1px dashed var(--c-border);
+  padding-top: var(--space-md);
+}
+.admin-user-tags-editor .form-input { flex: 1 1 auto; }
+.admin-user-chip.is-tag {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: #2A2D3A;
+}
 
 /* 无权限提示（页面级拦截） */
 .admin-forbidden {

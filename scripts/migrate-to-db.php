@@ -228,5 +228,37 @@ echo "--- 修正服务器端口 ---\n";
 $portFixed = $db->exec("UPDATE servers SET port = 25565 WHERE id IN (1, 4) AND (port IS NULL OR port <= 0)");
 echo "已修正 {$portFixed} 台服务器的端口为 25565（Java 版默认端口）\n\n";
 
+// ---- 种子：首页社团数据 / 发展历程时间轴 ----
+// 幂等：仅在对应表为空时插入与当前页面一致的默认值
+echo "--- 种子 首页数据 与 发展历程 ---\n";
+$statCount = (int) $db->query("SELECT COUNT(*) FROM site_stats")->fetchColumn();
+if ($statCount > 0) {
+    echo "site_stats 已有 {$statCount} 条，跳过种子\n\n";
+} else {
+    $ts = time();
+    $stmt = $db->prepare("INSERT INTO site_stats (label, value, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)");
+    $defaults = [['注册成员', '150+', 0], ['建筑作品', '1+', 1], ['已办活动', '5+', 2]];
+    foreach ($defaults as $d) {
+        $stmt->execute([$d[0], $d[1], $d[2], $ts, $ts]);
+    }
+    echo "已插入 " . count($defaults) . " 条默认社团数据\n\n";
+}
+$tlCount = (int) $db->query("SELECT COUNT(*) FROM timeline_events")->fetchColumn();
+if ($tlCount > 0) {
+    echo "timeline_events 已有 {$tlCount} 条，跳过种子\n\n";
+} else {
+    $ts = time();
+    $stmt = $db->prepare("INSERT INTO timeline_events (date_label, title, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)");
+    $defaults = [
+        ['2023-10-09', '社群正式建立', '一群热爱 Minecraft 的同学开始筹备创建 Minecraft 社群。', 0],
+        ['2024-09-16', '加入 MUA', '正式成为 MUA组织成员，与全国高校 MC 社群建立联系。', 1],
+        ['未来……', '等你来书写', '更多精彩即将发生，期待你的加入。', 2],
+    ];
+    foreach ($defaults as $d) {
+        $stmt->execute([$d[0], $d[1], $d[2], $d[3], $ts, $ts]);
+    }
+    echo "已插入 " . count($defaults) . " 条默认时间轴\n\n";
+}
+
 echo "=== 迁移完成 ===\n";
 echo "数据库文件：{$dbPath}\n";

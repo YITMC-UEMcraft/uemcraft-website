@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.documentElement.style.colorScheme = t;
     localStorage.setItem(THEME_KEY, t);
     document.querySelectorAll('.theme-option').forEach(function (btn) {
-      btn.classList.toggle('is-active', btn.dataset.theme === t);
+      btn.classList.toggle('is-active', btn.dataset.themeTarget === t);
     });
   }
 
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 主题按钮
   document.querySelectorAll('.theme-option').forEach(function (btn) {
-    btn.addEventListener('click', function () { setTheme(btn.dataset.theme); });
+    btn.addEventListener('click', function () { setTheme(btn.dataset.themeTarget); });
   });
 
   // 纹理按钮

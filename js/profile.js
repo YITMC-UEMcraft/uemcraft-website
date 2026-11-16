@@ -41,6 +41,15 @@
     nickEl.textContent = user.nickname || '未命名用户';
     nickEl.title = user.nickname || '';
 
+    var tagsEl = document.getElementById('profileTags');
+    if (tagsEl) {
+      var tags = user.tags || [];
+      tagsEl.innerHTML = tags.map(function (t) {
+        return '<span class="member-tag">' + escapeHtml(t) + '</span>';
+      }).join('');
+      tagsEl.style.display = tags.length ? '' : 'none';
+    }
+
     var playerLine = document.getElementById('profilePlayerLine');
     playerLine.title = user.player_name ? '展示角色：' + user.player_name : '';
     if (user.player_name) {
