@@ -17,8 +17,7 @@
   background:var(--loader-bg, #002140);
   transition:transform .6s cubic-bezier(.7,0,.3,1);
 }
-/* MC 主题：遮幕用品牌绿，标题改白、进度条改金，保证绿底上的对比度 */
-[data-theme="mc"] .loader-curtain { background:#3C8527; }
+/* MC 主题：遮幕/帷幕用品牌绿（--loader-bg），标题改白、进度条改金，保证绿底上的对比度 */
 [data-theme="mc"] .loader-title { color:#FFFFFF; }
 [data-theme="mc"] .loader-progress-bar { background:#FFC42B; }
 .loader-curtain-l { left:0; }
@@ -149,7 +148,7 @@
   position:absolute;
   top:0; bottom:0;
   width:50%;
-  background:#002140;
+  background:var(--loader-bg, #002140);
   transition:transform .5s cubic-bezier(.7,0,.3,1);
 }
 .pt-curtain-l { left:0; transform:translateX(-100%); }
