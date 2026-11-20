@@ -215,6 +215,7 @@
     html += '<div class="theme-options">';
     html += '<button class="theme-option" data-theme-target="light" title="亮色模式"><img src="/assets/svg/sun.svg" alt="" width="18" height="18"></button>';
     html += '<button class="theme-option" data-theme-target="dark" title="深色模式"><img src="/assets/svg/moon.svg" alt="" width="18" height="18"></button>';
+        html += '<button class="theme-option" data-theme-target="mc" title="MC 主题"><img src="/assets/svg/mc_theme.svg" alt="" width="18" height="18"></button>';
     html += '</div></div>';
     html += '<div class="settings-group"><span class="settings-label">背景纹理</span>';
     html += '<div class="texture-grid">' + textureBtns + '</div>';

@@ -496,7 +496,8 @@
   color:var(--c-text-muted);
 }
 
-/* ---- Server refresh row（服务器状态只在加载时查询一次，需要更新时手动点） ---- */
+/* ---- Server refresh row（服务器状态只在加载时查询一次，需要更新时手动点） ----
+   桌面端：贴齐 section 标题行右缘；移动端：标题下方居中 */
 .server-refresh {
   display:flex;
   align-items:center;
@@ -504,6 +505,16 @@
   flex-wrap:wrap;
   gap:var(--space-sm) var(--space-md);
   margin-top:var(--space-md);
+}
+@media (min-width: 769px) {
+  .section-head { position:relative; }
+  #serverSection .server-refresh {
+    position:absolute;
+    right:0;
+    top:50%;
+    transform:translateY(-50%);
+    margin-top:0;
+  }
 }
 .server-refresh-btn.is-busy {
   opacity:.7;
@@ -2523,3 +2534,36 @@ a.contact-card:hover .cc-title {
   transform: translate(-2px, -2px);
   box-shadow: var(--shadow-hover);
 }
+
+/* ---- MC 主题组件质感（minecraft.net 设计系统蒸馏） ----
+   按钮 bevel：上暗下亮的 6px 内嵌硬边（btn-sm 3px），配色随底色变化；
+   顶栏/页脚/横幅用暖黑家族，与 minecraft.net 的表面层级一致。 */
+[data-theme="mc"] .btn { --bevel:6px; }
+[data-theme="mc"] .btn-sm { --bevel:3px; }
+[data-theme="mc"] .btn-primary {
+  background:#3C8527;
+  border-color:#3C8527;
+  color:#fff;
+  box-shadow: inset 0 calc(var(--bevel) * -1) 0 rgb(42,100,28), inset 0 var(--bevel) 0 rgb(82,165,53), 2px 2px 0 rgba(0,0,0,.30);
+}
+[data-theme="mc"] .btn-primary:hover {
+  background:#469631;
+  border-color:#469631;
+  box-shadow: inset 0 calc(var(--bevel) * -1) 0 rgb(42,100,28), inset 0 var(--bevel) 0 rgb(90,180,60), 2px 2px 0 rgba(0,0,0,.30);
+}
+[data-theme="mc"] .btn-gold {
+  background:#FFC42B;
+  border-color:#FFC42B;
+  color:#071927;
+  box-shadow: inset 0 calc(var(--bevel) * -1) 0 rgb(219,159,33), inset 0 var(--bevel) 0 rgb(255,217,83), 2px 2px 0 rgba(0,0,0,.30);
+}
+[data-theme="mc"] .btn-outline {
+  background:transparent;
+  color:#6CC349;
+  border-color:#6CC349;
+  box-shadow:none;
+}
+[data-theme="mc"] .btn-outline:hover { background:rgba(108,195,73,.15); color:#A0E081; }
+[data-theme="mc"] .btn-ghost { background:#262423; color:#EDE5E2; border-color:#4E4744; }
+[data-theme="mc"] .site-footer { background:#171615; }
+[data-theme="mc"] .aboutus-banner { --banner-bg:#262423; --banner-line:rgba(255,255,255,.06); }

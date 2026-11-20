@@ -220,6 +220,55 @@
     );
 }
 
+/* ---- MC 主题（minecraft.net 设计系统蒸馏：暖黑三级表面 + 绿/金点睛 + bevel 按钮） ---- */
+[data-theme="mc"] {
+  /* 背景层级：#171615 主导 / #111111 深黑区块 / #3D3938 卡片 / #262423 次级 */
+  --c-bg:        #171615;
+  --c-bg-2:      #111111;
+  --c-bg-section-alt: #111111;
+  --c-surface:   #3D3938;
+  --c-surface-2: #262423;
+  --c-border:    #4E4744;
+
+  /* 主色：MC 绿（选中/链接）+ 按钮深绿；点缀金/橙 */
+  --c-primary:      #6CC349;
+  --c-primary-hi:   #A0E081;
+  --c-primary-dark: #3C8527;
+
+  --c-accent-1:     #FFC42B;
+  --c-accent-4:     #FFA41F;
+
+  /* 文字：白 / 暖灰次级 / 暖白强调 */
+  --c-text:       #FFFFFF;
+  --c-text-muted: #D0C5C0;
+  --c-heading:    #EDE5E2;
+
+  --c-gold:  #FFC42B;
+  --c-red:   #E74C3C;
+  --c-ok:    #6CC349;
+
+  --shadow-hard:    4px 4px 0 rgba(0,0,0,.30);
+  --shadow-hard-sm: 2px 2px 0 rgba(0,0,0,.30);
+  --shadow-hover:   6px 6px 0 rgba(0,0,0,.30);
+  --shadow-card:    0 2px 16px rgba(0,0,0,.25);
+  --shadow-nav:     0 2px 20px rgba(0,0,0,.40);
+
+  --pixel-grid: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,.03) 3px,
+      rgba(255,255,255,.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,.03) 3px,
+      rgba(255,255,255,.03) 4px
+    );
+}
+
 /* ---- 响应式断点（文档参考） ----
    >= 1200px  桌面大屏
    >= 992px   桌面

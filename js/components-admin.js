@@ -108,6 +108,7 @@
     html += '<div class="theme-options admin-topbar-theme">';
     html += '<button class="theme-option" data-theme-target="light" title="亮色模式" aria-label="亮色模式"><img src="/assets/svg/sun.svg" alt="" width="18" height="18"></button>';
     html += '<button class="theme-option" data-theme-target="dark" title="深色模式" aria-label="深色模式"><img src="/assets/svg/moon.svg" alt="" width="18" height="18"></button>';
+    html += '<button class="theme-option" data-theme-target="mc" title="MC 主题" aria-label="MC 主题"><img src="/assets/svg/mc_theme.svg" alt="" width="18" height="18"></button>';
     html += '</div>';
     html += '</div></header>';
 

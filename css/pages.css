@@ -14,9 +14,13 @@
   position:absolute;
   top:0; bottom:0;
   width:50%;
-  background:#002140;
+  background:var(--loader-bg, #002140);
   transition:transform .6s cubic-bezier(.7,0,.3,1);
 }
+/* MC 主题：遮幕用品牌绿，标题改白、进度条改金，保证绿底上的对比度 */
+[data-theme="mc"] .loader-curtain { background:#3C8527; }
+[data-theme="mc"] .loader-title { color:#FFFFFF; }
+[data-theme="mc"] .loader-progress-bar { background:#FFC42B; }
 .loader-curtain-l { left:0; }
 .loader-curtain-r { right:0; }
 .page-loader.is-done .loader-curtain-l { transform:translateX(-100%); }
@@ -615,20 +619,33 @@
 }
 
 /* 首页：关于同好会（精简居中介绍，与 about.html 详细版区分） */
-/* 首页「关于同好会」：深色横幅（白字 + 像素网格底，右侧行动按钮） */
+/* 首页「关于同好会」横幅：随主题切换配色（浅色=品牌深蓝 / 深色=深藏青）。
+   网格纹理用 background-size 平铺（而非 repeating-gradient 全幅渲染），
+   避免 fractional DPR 下条纹累积不均。 */
 .aboutus-banner {
+  --banner-bg: var(--c-primary-dark);
+  --banner-line: rgba(255,255,255,.10);
+  --banner-heading: #fff;
+  --banner-text: rgba(255,255,255,.85);
+  --banner-label: rgba(255,255,255,.65);
+  --banner-label-border: rgba(255,255,255,.30);
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-xl);
-  background-color: #141A2B;
+  background-color: var(--banner-bg);
   background-image:
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,.045) 3px, rgba(255,255,255,.045) 4px),
-    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,.045) 3px, rgba(255,255,255,.045) 4px);
+    linear-gradient(var(--banner-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--banner-line) 1px, transparent 1px);
+  background-size: 4px 4px;
   border: 2px solid var(--c-border);
   box-shadow: var(--shadow-hard);
   padding: var(--space-2xl);
-  color: #E7EAF2;
+  color: var(--banner-text);
+}
+[data-theme="dark"] .aboutus-banner {
+  --banner-bg: #141A2B;
+  --banner-line: rgba(255,255,255,.06);
 }
 .aboutus-banner-main {
   display: flex;
@@ -647,19 +664,19 @@
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
   letter-spacing: .02em;
-  color: rgba(255,255,255,.65);
-  border: 1px solid rgba(255,255,255,.28);
+  color: var(--banner-label);
+  border: 1px solid var(--banner-label-border);
   padding: .15em .6em;
   margin-bottom: var(--space-sm);
 }
 .aboutus-banner-text h2 {
-  color: #fff;
+  color: var(--banner-heading);
   margin-bottom: var(--space-sm);
 }
 .aboutus-banner-lead {
   font-size: var(--fs-base);
   line-height: 1.9;
-  color: rgba(231,234,242,.82);
+  color: var(--banner-text);
 }
 .aboutus-banner-lead strong {
   color: #F5C542;
