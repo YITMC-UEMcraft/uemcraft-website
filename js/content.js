@@ -109,13 +109,15 @@ function renderNewsEmptyCard() {
 }
 
 function renderEventCard(item) {
-  var a = document.createElement('a');
-  a.href = item.link || '#';
+  // 无跳转链接时不渲染为链接元素，点击不做任何跳转
+  var hasLink = !!(item.link && String(item.link).trim());
+  var a = document.createElement(hasLink ? 'a' : 'div');
+  if (hasLink) a.href = item.link;
   var st = EVENT_STATUS[item.status] || EVENT_STATUS.upcoming;
   var featuredClass = item.is_featured ? ' is-featured' : '';
   var featuredBadge = item.is_featured ? '<span class="featured-badge">精选</span>' : '';
   a.innerHTML =
-    '<div class="event-card' + featuredClass + '">' +
+    '<div class="event-card' + featuredClass + (hasLink ? '' : ' is-static') + '">' +
       '<div class="event-card-img">' +
         '<img src="' + escapeHtml(item.cover || '') + '" alt="">' +
         '<div class="event-img-meta">' +
@@ -137,6 +139,7 @@ function renderEventListItem(item, index) {
   div.className = 'event-list-item' + (isEven ? ' is-even' : '');
   var st = EVENT_STATUS[item.status] || EVENT_STATUS.upcoming;
   var cover = item.cover || '';
+  var hasLink = !!(item.link && String(item.link).trim());
   div.innerHTML =
     '<div class="event-list-img">' +
       '<img src="' + escapeHtml(cover) + '" alt="">' +
@@ -149,9 +152,11 @@ function renderEventListItem(item, index) {
         '<span class="event-status ' + st.cls + '">' + st.label + '</span>' +
       '</div>' +
       '<p class="event-list-excerpt">' + escapeHtml(item.excerpt || '') + '</p>' +
-      '<div class="event-list-actions">' +
-        '<a href="' + escapeHtml(item.link || '#') + '" class="btn btn-outline btn-sm">查看详情 →</a>' +
-      '</div>' +
+      (hasLink
+        ? '<div class="event-list-actions">' +
+            '<a href="' + escapeHtml(item.link) + '" class="btn btn-outline btn-sm">查看详情 →</a>' +
+          '</div>'
+        : '') +
     '</div>';
   return div;
 }

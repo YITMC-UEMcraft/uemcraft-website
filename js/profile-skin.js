@@ -41,6 +41,19 @@
         viewer.setView('front');
       });
     }
+
+    // 暂停 / 继续自动旋转（按钮切换 pause / continue 图标）
+    var rotating = true;
+    var rotateBtn = document.getElementById('skinRotate');
+    if (rotateBtn) {
+      rotateBtn.addEventListener('click', function () {
+        rotating = !rotating;
+        viewer.setAutoRotate(rotating);
+        rotateBtn.classList.toggle('is-paused', !rotating);
+        rotateBtn.title = rotating ? '暂停旋转' : '继续旋转';
+        rotateBtn.setAttribute('aria-label', rotating ? '暂停旋转' : '继续旋转');
+      });
+    }
   };
 
   img.onerror = function () {

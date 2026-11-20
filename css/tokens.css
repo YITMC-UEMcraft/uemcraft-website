@@ -72,12 +72,12 @@
 /* ---- 亮色模式（默认） ---- */
 :root {
   /* 背景层级 */
-  --c-bg:        #EDEEF3;
-  --c-bg-2:      #E2E4EB;
-  --c-bg-section-alt: #E6E8EF;
-  --c-surface:   #F6F7FA;
-  --c-surface-2: #EFF0F5;
-  --c-border:    #CDD1DD;
+  --c-bg:        #E3E6EE;
+  --c-bg-2:      #D8DBE5;
+  --c-bg-section-alt: #DBDEE8;
+  --c-surface:   #EEF0F5;
+  --c-surface-2: #E2E5EE;
+  --c-border:    #C2C7D6;
 
   /* 主题色系（蓝） */
   --c-primary:      #2B5BD9;

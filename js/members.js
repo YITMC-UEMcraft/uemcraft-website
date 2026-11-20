@@ -95,6 +95,8 @@
       html += '</span>';
       if (m.bio) {
         html += '<span class="member-row-bio" title="' + escapeAttr(m.bio) + '">' + escapeHtml(m.bio) + '</span>';
+      } else {
+        html += '<span class="member-row-bio is-empty">这个人很懒，还没有写简介。</span>';
       }
       var tags = tagsOf(m);
       if (tags.length) {
