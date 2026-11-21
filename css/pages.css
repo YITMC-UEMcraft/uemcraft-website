@@ -1188,6 +1188,11 @@
   line-height:1.78;
   color:var(--c-text);
 }
+/* 标题锚点定位：跳转/scrollIntoView 时预留固定悬浮头部的高度 */
+.docs-body h2,
+.docs-body h3 {
+  scroll-margin-top:calc(var(--header-h) + 10px);
+}
 .docs-body h1,.docs-body h2,.docs-body h3,
 .docs-body h4,.docs-body h5,.docs-body h6 {
   color:var(--c-heading);

@@ -228,18 +228,79 @@
     var html = '';
     headings.forEach(function (h) {
       var level = h.tagName === 'H3' ? ' docs-toc-link-h3' : '';
-      html += '<a href="#' + h.id + '" class="docs-toc-link' + level + '">' + escapeHtml(h.textContent) + '</a>';
+      html += '<a href="#' + h.id + '" class="docs-toc-link' + level + '" data-heading="' + h.id + '">' + escapeHtml(h.textContent) + '</a>';
     });
     tocNav.innerHTML = html;
     outline.classList.remove('is-empty');
 
+    /* ---- 标题跳转 + 滚动校正 ----
+       图片懒加载会让标题在跳转后继续下移。跳转时记录目标标题；
+       之后每张图片 load / 定时器触发时都重新对位，直到
+       用户手动滚动（滚轮/触摸/方向键）或全部图片加载完毕。 */
+    var pendingHeading = null;
+
+    function scrollToHeading(h) {
+      // docs 页的滚动容器结构特殊（window.scrollTo 不生效），
+      // scrollIntoView 会自动滚动所有必要的祖先容器；
+      // 精确对位由 h2/h3 的 scroll-margin-top 保证
+      h.scrollIntoView({ block: 'start', behavior: 'instant' });
+    }
+    function correct() {
+      if (pendingHeading && pendingHeading.isConnected) scrollToHeading(pendingHeading);
+      else pendingHeading = null;
+    }
+    function cancelCorrection() { pendingHeading = null; }
+
+    function jumpToHeading(id) {
+      var h = document.getElementById(id);
+      if (!h) return;
+      pendingHeading = h;
+      scrollToHeading(h);
+
+      // 未完成加载的图片：每张加载完成后重新对位
+      contentEl.querySelectorAll('img').forEach(function (img) {
+        if (img.complete) return;
+        var done = function () { correct(); if (pendingHeading === null) cleanup(); };
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      });
+
+      // 字体/文本渲染导致的位移：定时兜底校正
+      [200, 500, 1000, 1800].forEach(function (t) { setTimeout(correct, t); });
+
+      // 用户手动滚动即停止校正
+      var cancelEvents = ['wheel', 'touchmove'];
+      cancelEvents.forEach(function (ev) {
+        window.addEventListener(ev, function onCancel() {
+          cancelCorrection();
+          cancelEvents.forEach(function (ev2) { window.removeEventListener(ev2, onCancel); });
+        }, { passive: true, once: true });
+      });
+    }
+
+    tocNav.addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('.docs-toc-link') : null;
+      if (!link) return;
+      e.preventDefault();
+      jumpToHeading(link.getAttribute('data-heading'));
+    });
+    // 正文内的锚点链接同样校正
+    contentEl.addEventListener('click', function (e) {
+      var link = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!link) return;
+      var id = decodeURIComponent((link.getAttribute('href') || '').slice(1));
+      if (!id || !document.getElementById(id)) return;
+      e.preventDefault();
+      jumpToHeading(id);
+    });
+
     // 滚动高亮当前小节
     var links = tocNav.querySelectorAll('.docs-toc-link');
     function onScroll() {
-      var scrollY = window.scrollY + 120;
+      // 用视口位置判断当前小节（不依赖特定滚动容器）
       var current = null;
       headings.forEach(function (h) {
-        if (h.offsetTop <= scrollY) current = h;
+        if (h.getBoundingClientRect().top <= 140) current = h;
       });
       links.forEach(function (link) {
         link.classList.toggle('is-active', !!current && link.getAttribute('href') === '#' + current.id);

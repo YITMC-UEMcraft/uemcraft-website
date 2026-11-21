@@ -501,20 +501,18 @@
 .server-refresh {
   display:flex;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-end;
   flex-wrap:wrap;
   gap:var(--space-sm) var(--space-md);
-  margin-top:var(--space-md);
 }
-@media (min-width: 769px) {
-  .section-head { position:relative; }
-  #serverSection .server-refresh {
-    position:absolute;
-    right:0;
-    top:50%;
-    transform:translateY(-50%);
-    margin-top:0;
-  }
+#serverSection .server-refresh {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:var(--space-sm) var(--space-md);
+  margin-top:calc(-1 * var(--space-2xl));
+  margin-bottom:var(--space-lg);
 }
 .server-refresh-btn.is-busy {
   opacity:.7;
@@ -1139,6 +1137,63 @@ img.member-avatar { object-fit:cover; }
   display:flex;
   flex-direction:column;
 }
+/* 统一活动卡片高度：标题/简介均两行封顶，预留展开按钮行 */
+.event-card { position:relative; }
+/* 有链接的卡片以 <a> 包裹：转为块级，消除行内基线带来的 3px 高度差 */
+#eventUpcoming > a { display:block; }
+.event-card .news-title {
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.event-excerpt-wrap { position:relative; padding-bottom:26px; flex:1; }
+.event-card-body .news-excerpt {
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  /* 固定简介区高度：一行/两行/零文本的卡片高度完全一致 */
+  height:45px;
+}
+.event-expand-btn {
+  position:absolute;
+  right:0;
+  bottom:0;
+  background:none;
+  border:0;
+  padding:2px 0;
+  font-size:var(--fs-xs);
+  font-weight:700;
+  color:var(--c-primary);
+  cursor:pointer;
+}
+.event-expand-btn:hover { text-decoration:underline; }
+/* 展开：下拉浮层覆盖下方内容，其他卡片高度与间距不变 */
+.event-card.is-expanded { overflow:visible; }
+/* 展开：卡片通过内部 padding 向下延展展示全文——
+   延展区与卡片同宽同底色、左右边框与卡片重合、顶部无缝衔接，
+   绝对定位脱离文档流，因此下方卡片的位置与间距完全不变 */
+.event-card.is-expanded .event-excerpt {
+  position:absolute;
+  top:100%;
+  left:-2px;
+  right:-2px;
+  display:block;
+  -webkit-line-clamp:unset;
+  -webkit-box-orient:horizontal;
+  overflow:auto;
+  max-height:360px;
+  background:var(--c-surface);
+  border:2px solid var(--c-border);
+  border-top:0;
+  box-shadow:var(--shadow-hover);
+  padding:0 var(--space-md) var(--space-md);
+  z-index:6;
+}
+.event-card.is-expanded .event-excerpt-wrap { z-index:6; }
+/* 展开时简介脱离文档流，用 min-height 保持卡片占位不变（45px 简介 + 26px 按钮行） */
+.event-card.is-expanded .event-excerpt-wrap { min-height:71px; }
 .event-card-body .news-title {
   font-weight:700;
   color:var(--c-heading);
@@ -2567,3 +2622,7 @@ a.contact-card:hover .cc-title {
 [data-theme="mc"] .btn-ghost { background:#262423; color:#EDE5E2; border-color:#4E4744; }
 [data-theme="mc"] .site-footer { background:#171615; }
 [data-theme="mc"] .aboutus-banner { --banner-bg:#262423; --banner-line:rgba(255,255,255,.06); }
+
+/* MC 主题：顶栏与面板均为暖黑，齿轮/主题图标保持白色以保证对比度 */
+[data-theme="mc"] .settings-toggle .settings-icon { filter:none; }
+[data-theme="mc"] .theme-option img { filter:none; }

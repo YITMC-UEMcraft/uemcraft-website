@@ -127,10 +127,54 @@ function renderEventCard(item) {
       '</div>' +
       '<div class="event-card-body">' +
         '<div class="news-title">' + featuredBadge + escapeHtml(item.title) + '</div>' +
-        '<div class="news-excerpt">' + escapeHtml(item.excerpt || '') + '</div>' +
+        '<div class="event-excerpt-wrap">' +
+          '<div class="news-excerpt event-excerpt">' + escapeHtml(item.excerpt || '') + '</div>' +
+          '<button type="button" class="event-expand-btn" hidden><span class="event-expand-label">展开 ▾</span></button>' +
+        '</div>' +
       '</div>' +
     '</div>';
   return a;
+}
+
+/* 统一活动卡片高度：简介超长时显示「展开」按钮，展开为下拉浮层，
+   不改变其他卡片的高度与间距 */
+function initEventExpand(gridEl) {
+  if (!gridEl) return;
+
+  function collapse(card) {
+    card.classList.remove('is-expanded');
+    var label = card.querySelector('.event-expand-label');
+    if (label) label.textContent = '展开 ▾';
+  }
+
+  // 测量溢出：需要展开的卡片才显示按钮
+  gridEl.querySelectorAll('.event-excerpt').forEach(function (ex) {
+    var btn = ex.parentNode.querySelector('.event-expand-btn');
+    if (btn && ex.scrollHeight > ex.clientHeight + 1) btn.hidden = false;
+  });
+
+  gridEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('.event-expand-btn');
+    if (btn) {
+      // 按钮可能位于链接卡内，阻止冒泡跳转
+      e.preventDefault();
+      var card = btn.closest('.event-card');
+      var expanded = card.classList.toggle('is-expanded');
+      var label = card.querySelector('.event-expand-label');
+      if (label) label.textContent = expanded ? '收起 ▴' : '展开 ▾';
+      // 同一时间只展开一张
+      if (expanded) {
+        gridEl.querySelectorAll('.event-card.is-expanded').forEach(function (c) {
+          if (c !== card) collapse(c);
+        });
+      }
+      return;
+    }
+    // 点击卡片外/非展开区：收起
+    if (!e.target.closest('.event-card.is-expanded')) {
+      gridEl.querySelectorAll('.event-card.is-expanded').forEach(collapse);
+    }
+  });
 }
 
 function renderEventListItem(item, index) {
@@ -441,6 +485,7 @@ function initContent() {
         return;
       }
       items.forEach(function (item) { eventUpcoming.appendChild(renderEventCard(item)); });
+      initEventExpand(eventUpcoming);
     }).catch(function () {
       eventUpcoming.innerHTML = '<div class="wall-empty">最近没有可展示的活动...</div>';
     });
